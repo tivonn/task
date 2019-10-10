@@ -1,3 +1,5 @@
+'use strict'
+
 const Controller = require('egg').Controller
 
 const getRule = {
@@ -13,7 +15,7 @@ class UserController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = getRule
+    const params = Object.assign({}, getRule)
     ctx.body = await this.userService.index(params)
   }
 
