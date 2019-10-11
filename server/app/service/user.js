@@ -8,18 +8,20 @@ class UserService extends Service {
   }
 
   async index (params) {
-    return await this.userModel.findAll({
+    const users = await this.userModel.findAll({
       attributes: params.attributes
     })
+    return users
   }
 
   async show (params) {
-    return await this.userModel.findOne({
+    const user = await this.userModel.findOne({
       where: {
         id: params.id
       },
       attributes: params.attributes
     })
+    return user
   }
 }
 
