@@ -19,3 +19,7 @@ exports.sequelize = {
   database: 'task',
   timezone: '+08:00'
 }
+
+exports.middleware = [
+  'currentUser'
+]

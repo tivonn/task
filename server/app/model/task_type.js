@@ -50,17 +50,17 @@ module.exports = app => {
   ;(async () => {
     // await TaskType.sync()
     // 默认任务类型
-    // TaskType.create({
+    // await TaskType.create({
     //   name: '今日待办',
     //   color: '#e6a23c',
     //   isDefault: true
     // })
-    // TaskType.create({
+    // await TaskType.create({
     //   name: '近期待办',
     //   color: '#409eff',
     //   isDefault: true
     // })
-    // TaskType.create({
+    // await TaskType.create({
     //   name: '后续待办',
     //   color: '#55c580',
     //   isDefault: true

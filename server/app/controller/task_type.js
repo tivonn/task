@@ -13,7 +13,7 @@ class TaskTypeController extends Controller {
 
   async create () {
     const ctx = this.ctx
-    const params = Object.assign({}, ctx.request.body, updateDefault)
+    const params = Object.assign({}, ctx.request.body, updateDefault, { createUserId: ctx.state.currentUser.id })
     // todo validate
     const taskType = await this.taskTypeService.create(params)
     ctx.body = taskType

@@ -47,19 +47,19 @@ module.exports = app => {
     // await User.sync()
     // await User.sync({ force: true }) // todo 全局sync
     // 默认人员
-    // User.create({
+    // await User.create({
     //   name: '卜帅',
     //   imCode: '1230',
     //   account: 'bushuai@henhaoji.com',
     //   password: '123123'
     // })
-    // User.create({
+    // await User.create({
     //   name: '黎进',
     //   imCode: '4560',
     //   account: 'lijin@henhaoji.com',
     //   password: '456456'
     // })
-    // User.create({
+    // await User.create({
     //   name: '邓锐涛',
     //   imCode: '7890',
     //   account: 'dengruitao@henhaoji.com',
