@@ -7,10 +7,24 @@ class TaskTypeService extends Service {
     return this.app.model.TaskType
   }
 
-  async create(params) {
-    const ctx = this.ctx
-    const taskType = await ctx.model.TaskType.create(params)
+  async create (params) {
+    const taskType = await this.taskTypeModel.create(params)
     return taskType
+  }
+
+  async destroy (params) {
+    const ctx = this.ctx
+    const taskType = await this.taskTypeModel.findByPk(params.id)
+    if (!taskType) {
+      ctx.status = 404
+      return
+    }
+    if (taskType.isDefault) {
+      ctx.status = 422
+      return
+    }
+    await taskType.destroy()
+    ctx.status = 200
   }
 }
 

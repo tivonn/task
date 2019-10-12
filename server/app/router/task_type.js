@@ -2,6 +2,7 @@
 
 module.exports = app => {
   const { router, controller } = app
-  const taskTypeRouter = router.namespace('/api/taskType')  // todo 全局前缀
+  const taskTypeRouter = router.namespace('/api/taskType')
   taskTypeRouter.post('/', controller.taskType.create)
+  taskTypeRouter.delete('/:id', controller.taskType.destroy)
 }

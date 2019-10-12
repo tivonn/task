@@ -2,8 +2,9 @@
 
 module.exports = app => {
   const DataTypes = app.Sequelize
+  const sequelize = app.model
 
-  const TaskType = app.model.define('task_type', {
+  const TaskType = sequelize.define('task_type', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -33,29 +34,13 @@ module.exports = app => {
       type: DataTypes.INTEGER,
       field: 'create_user_id',
       comment: '创建人id'
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at',
-      defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
-      comment: '创建时间'
-    },
-    updatedAt: {
-      // todo auto update time
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at',
-      defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
-      comment: '更新时间'
     }
   }, {
-    freezeTableName: true,
-    timestamps: false
+    freezeTableName: true
   })
 
   TaskType.associate = () => {
-    app.model.TaskType.belongsTo(app.model.User, {
+    sequelize.TaskType.belongsTo(sequelize.User, {
       as: 'createUser',
       foreignKey: 'createUserId',
       targetKey: 'id'

@@ -2,8 +2,9 @@
 
 module.exports = app => {
   const DataTypes = app.Sequelize
+  const sequelize = app.model
 
-  const User = app.model.define('user', {
+  const User = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
