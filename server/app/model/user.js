@@ -39,13 +39,10 @@ module.exports = app => {
       comment: '密码'
     }
   }, {
-    freezeTableName: true,  // todo 全局freeze
     timestamps: false
   })
 
   ;(async () => {
-    // await User.sync()
-    // await User.sync({ force: true }) // todo 全局sync
     // 默认人员
     // await User.create({
     //   name: '卜帅',

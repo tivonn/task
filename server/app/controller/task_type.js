@@ -13,7 +13,7 @@ class TaskTypeController extends Controller {
 
   async create () {
     const ctx = this.ctx
-    const params = Object.assign({}, ctx.request.body, updateDefault, { createUserId: ctx.state.currentUser.id })
+    const params = Object.assign({}, ctx.request.body, updateDefault, { creatorId: ctx.state.currentUser.id })
     // todo validate
     const taskType = await this.taskTypeService.create(params)
     ctx.body = taskType
@@ -21,7 +21,7 @@ class TaskTypeController extends Controller {
 
   async destroy () {
     const ctx = this.ctx
-    const params = Object.assign({}, ctx.params, { createUserId: ctx.state.currentUser.id })
+    const params = Object.assign({}, ctx.params, { creatorId: ctx.state.currentUser.id })
     await this.taskTypeService.destroy(params)
   }
 }

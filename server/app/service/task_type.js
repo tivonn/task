@@ -14,11 +14,11 @@ class TaskTypeService extends Service {
 
   async destroy (params) {
     const ctx = this.ctx
-    const { id, createUserId } = params
+    const { id, creatorId } = params
     const taskType = await this.taskTypeModel.findOne({
       where: {
         id,
-        createUserId
+        creatorId
       }
     })
     if (!taskType) {

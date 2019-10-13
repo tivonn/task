@@ -30,25 +30,22 @@ module.exports = app => {
       field: 'is_default',
       comment: '是否初始值'
     },
-    createUserId: {
+    creatorId: {
       type: DataTypes.INTEGER,
-      field: 'create_user_id',
+      field: 'creator_id',
       comment: '创建人id'
     }
-  }, {
-    freezeTableName: true
   })
 
   TaskType.associate = () => {
     sequelize.TaskType.belongsTo(sequelize.User, {
-      as: 'createUser',
-      foreignKey: 'createUserId',
+      as: 'creator',
+      foreignKey: 'creatorId',
       targetKey: 'id'
     })
   }
 
   ;(async () => {
-    // await TaskType.sync()
     // 默认任务类型
     // await TaskType.create({
     //   name: '今日待办',

@@ -17,7 +17,10 @@ exports.sequelize = {
   host: 'localhost',
   port: 3306,
   database: 'task',
-  timezone: '+08:00'
+  timezone: '+08:00',
+  define: {
+    freezeTableName: true
+  },
 }
 
 exports.middleware = [
