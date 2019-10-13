@@ -14,9 +14,15 @@ class TaskTypeService extends Service {
 
   async destroy (params) {
     const ctx = this.ctx
-    const taskType = await this.taskTypeModel.findByPk(params.id)
+    const { id, createUserId } = params
+    const taskType = await this.taskTypeModel.findOne({
+      where: {
+        id,
+        createUserId
+      }
+    })
     if (!taskType) {
-      ctx.status = 404
+      ctx.throw(404)
       return
     }
     if (taskType.isDefault) {

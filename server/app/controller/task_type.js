@@ -21,7 +21,7 @@ class TaskTypeController extends Controller {
 
   async destroy () {
     const ctx = this.ctx
-    const params = Object.assign({}, ctx.params)
+    const params = Object.assign({}, ctx.params, { createUserId: ctx.state.currentUser.id })
     await this.taskTypeService.destroy(params)
   }
 }
