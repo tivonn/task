@@ -2,26 +2,34 @@
 
 const Controller = require('egg').Controller
 
-const updateDefault = {
-  isDefault: false
+const getRule = {
+  attributes: ['id', 'name', 'color']
 }
+
 
 class TaskTypeController extends Controller {
   get taskTypeService () {
     return this.ctx.service.taskType
   }
 
+  async index () {
+    const { ctx } = this
+    const params = Object.assign({}, getRule)
+    const taskTypes = await this.taskTypeService.index(params)
+    ctx.body = taskTypes
+  }
+
   async create () {
-    const ctx = this.ctx
-    const params = Object.assign({}, ctx.request.body, updateDefault, { creatorId: ctx.state.currentUser.id })
+    const { ctx } = this
+    const params = Object.assign({}, ctx.request.body)
     // todo validate
     const taskType = await this.taskTypeService.create(params)
     ctx.body = taskType
   }
 
   async destroy () {
-    const ctx = this.ctx
-    const params = Object.assign({}, ctx.params, { creatorId: ctx.state.currentUser.id })
+    const { ctx } = this
+    const params = Object.assign({}, ctx.params)
     await this.taskTypeService.destroy(params)
   }
 }

@@ -7,27 +7,52 @@ class TaskTypeService extends Service {
     return this.app.model.TaskType
   }
 
+  async index (params) {
+    const { ctx, app } = this
+    const { Op } = app.Sequelize
+    const { attributes } = params
+    const taskTypes = await this.taskTypeModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            isDefault: true
+          },
+          {
+            creatorId: ctx.state.currentUser.id
+          }
+        ]
+      },
+      attributes
+    })
+    return taskTypes
+  }
+
   async create (params) {
-    const taskType = await this.taskTypeModel.create(params)
+    const { ctx } = this
+    const updateDefault = {
+      isDefault: false,
+      creatorId: ctx.state.currentUser.id
+    }
+    const taskType = await this.taskTypeModel.create(Object.assign(params, updateDefault))
     return taskType
   }
 
   async destroy (params) {
-    const ctx = this.ctx
-    const { id, creatorId } = params
+    const { ctx } = this
+    const { id } = params
     const taskType = await this.taskTypeModel.findOne({
       where: {
-        id,
-        creatorId
+        id
       }
     })
     if (!taskType) {
-      ctx.throw(404)
-      return
+      ctx.throw(404, '不存在该任务类型')
     }
     if (taskType.isDefault) {
-      ctx.status = 422
-      return
+      ctx.throw(422, '默认任务类型无法删除')
+    }
+    if (taskType.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(422, '无权限删除')
     }
     await taskType.destroy()
     ctx.status = 200

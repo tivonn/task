@@ -18,12 +18,6 @@ module.exports = app => {
       field: 'name',
       comment: '姓名'
     },
-    taskTypeId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: 'task_type_id',
-      comment: '任务类型id'
-    },
     description: {
       type: DataTypes.TEXT,
       field: 'description',
@@ -39,6 +33,12 @@ module.exports = app => {
       type: DataTypes.DATE,
       field: 'deadline',
       comment: '截止时间'
+    },
+    taskTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'task_type_id',
+      comment: '任务类型id'
     },
     creatorId: {
       type: DataTypes.INTEGER,

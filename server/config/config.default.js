@@ -24,5 +24,6 @@ exports.sequelize = {
 }
 
 exports.middleware = [
-  'currentUser'
+  'currentUser',
+  'errorHandler'
 ]
