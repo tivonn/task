@@ -16,6 +16,10 @@ const createRules = {
   taskTypeId: {
     type: 'number',
     required: true
+  },
+  deadline: {
+    type: 'date',
+    required: false
   }
 }
 
@@ -63,7 +67,7 @@ class TaskController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = Object.assign({}, getRules)
+    const params = Object.assign({}, ctx.query)
     const tasks = await this.taskService.index(params)
     ctx.body = tasks
   }

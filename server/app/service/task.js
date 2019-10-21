@@ -9,13 +9,14 @@ class TaskService extends Service {
 
   async index (params) {
     const { ctx } = this
-    const { attributes } = params
+    // const { isCompleted } = params
     const tasks = await this.app.model.TaskType.findAll({
       attributes: ['id', 'name', 'color', 'isDefault'],
       include: {
         model: this.taskModel,
         as: 'task',
         where: {
+          // isCompleted: isCompleted,
           creatorId: ctx.state.currentUser.id
         },
         attributes: ['id', 'name', 'isCompleted', 'deadline']

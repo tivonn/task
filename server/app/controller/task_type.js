@@ -6,6 +6,17 @@ const getRules = {
   attributes: ['id', 'name', 'color']
 }
 
+const createRules = {
+  name: {
+    type: 'string',
+    required: true
+  },
+  color: {
+    type: 'string',
+    required: true
+  }
+}
+
 class TaskTypeController extends Controller {
   get taskTypeService () {
     return this.ctx.service.taskType
@@ -20,8 +31,7 @@ class TaskTypeController extends Controller {
 
   async create () {
     const { ctx } = this
-    const params = Object.assign({}, ctx.request.body)
-    // todo validate
+    const params = ctx.filterParams(createRules, Object.assign({}, ctx.request.body))
     const taskType = await this.taskTypeService.create(params)
     ctx.body = taskType
   }
