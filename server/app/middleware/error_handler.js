@@ -12,9 +12,6 @@ module.exports = () => {
         : err.message
       ctx.status = status
       ctx.body = { error }
-      if (status === 422) {
-        ctx.body.detail = err.errors
-      }
     }
   }
 }

@@ -8,7 +8,20 @@ class TaskService extends Service {
   }
 
   async index (params) {
-    return []
+    const { ctx } = this
+    const { attributes } = params
+    const tasks = await this.app.model.TaskType.findAll({
+      attributes: ['id', 'name', 'color', 'isDefault'],
+      include: {
+        model: this.taskModel,
+        as: 'task',
+        where: {
+          creatorId: ctx.state.currentUser.id
+        },
+        attributes: ['id', 'name', 'isCompleted', 'deadline']
+      }
+    })
+    return tasks
   }
 
   async show (params) {
@@ -35,7 +48,7 @@ class TaskService extends Service {
       isCompleted: false,
       creatorId: ctx.state.currentUser.id
     }
-    const task = await this.taskModel.create(Object.assign(params, updateDefault))
+    const task = await this.taskModel.create(Object.assign({}, params, updateDefault))
     return task
   }
 
@@ -53,8 +66,6 @@ class TaskService extends Service {
     if (task.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(422, '无权限更新')
     }
-    // todo validate
-    delete params.id
     await task.update(params)
     return task
   }

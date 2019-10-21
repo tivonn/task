@@ -17,6 +17,8 @@ exports.sequelize = {
   host: 'localhost',
   port: 3306,
   database: 'task',
+  username: 'task',
+  password: 'taskgo',
   timezone: '+08:00',
   define: {
     freezeTableName: true
@@ -27,3 +29,7 @@ exports.middleware = [
   'currentUser',
   'errorHandler'
 ]
+
+exports.validate = {
+  convert: true
+}

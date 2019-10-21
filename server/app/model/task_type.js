@@ -43,6 +43,11 @@ module.exports = app => {
       foreignKey: 'creatorId',
       targetKey: 'id'
     })
+    sequelize.TaskType.hasMany(sequelize.Task, {
+      as: 'task',
+      sourceKey: 'id',
+      targetKey: 'taskTypeId'
+    })
   }
 
   ;(async () => {

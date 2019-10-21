@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller
 
-const getRule = {
+const getRules = {
   attributes: {
     exclude: ['password']
   }
@@ -15,14 +15,14 @@ class UserController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = Object.assign({}, getRule)
+    const params = Object.assign({}, getRules)
     const users = await this.userService.index(params)
     ctx.body = users
   }
 
   async show () {
     const { ctx } = this
-    const params = Object.assign({}, getRule, ctx.params)
+    const params = Object.assign({}, getRules, ctx.params)
     const user = await this.userService.show(params)
     ctx.body = user
   }

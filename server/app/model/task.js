@@ -23,6 +23,7 @@ module.exports = app => {
       field: 'description',
       comment: '描述'
     },
+    // todo change to enum
     isCompleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

@@ -2,10 +2,9 @@
 
 const Controller = require('egg').Controller
 
-const getRule = {
+const getRules = {
   attributes: ['id', 'name', 'color']
 }
-
 
 class TaskTypeController extends Controller {
   get taskTypeService () {
@@ -14,7 +13,7 @@ class TaskTypeController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = Object.assign({}, getRule)
+    const params = Object.assign({}, getRules)
     const taskTypes = await this.taskTypeService.index(params)
     ctx.body = taskTypes
   }

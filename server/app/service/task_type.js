@@ -33,7 +33,7 @@ class TaskTypeService extends Service {
       isDefault: false,
       creatorId: ctx.state.currentUser.id
     }
-    const taskType = await this.taskTypeModel.create(Object.assign(params, updateDefault))
+    const taskType = await this.taskTypeModel.create(Object.assign({}, params, updateDefault))
     return taskType
   }
 
