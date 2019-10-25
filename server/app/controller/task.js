@@ -3,8 +3,13 @@
 const Controller = require('egg').Controller
 
 const getRules = {
-  attributes: {
-    exclude: ['createdAt', 'updatedAt']
+  id: {
+    type: 'number',
+    required: false,
+  },
+  status: {
+    type: 'number',
+    required: false
   }
 }
 
@@ -38,8 +43,8 @@ const updateRules = {
     required: false,
     allowEmpty: true
   },
-  isCompleted: {
-    type: 'boolean',
+  status: {
+    type: 'number',
     required: false
   },
   deadline: {
@@ -67,14 +72,14 @@ class TaskController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = Object.assign({}, ctx.query)
+    const params = ctx.filterParams(getRules, Object.assign({}, ctx.query))
     const tasks = await this.taskService.index(params)
     ctx.body = tasks
   }
 
   async show () {
     const { ctx } = this
-    const params = Object.assign({}, getRules, ctx.params)
+    const params = ctx.filterParams(getRules, Object.assign({}, ctx.params))
     const task = await this.taskService.show(params)
     ctx.body = task
   }

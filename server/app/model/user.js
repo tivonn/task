@@ -38,9 +38,17 @@ module.exports = app => {
       field: 'password',
       comment: '密码'
     }
-  }, {
-    timestamps: false
   })
+
+  // User.associate = () => {
+  //   sequelize.Task.belongsToMany(sequelize.Task, {
+  //     through: {
+  //       model: sequelize.TaskPrincipal,
+  //       unique: false,
+  //     },
+  //     foreignKey: 'taskId'
+  //   })
+  // }
 
   ;(async () => {
     // 默认人员

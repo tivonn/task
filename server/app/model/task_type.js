@@ -32,6 +32,7 @@ module.exports = app => {
     },
     creatorId: {
       type: DataTypes.INTEGER,
+      allowNull: true,
       field: 'creator_id',
       comment: '创建人id'
     }

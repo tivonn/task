@@ -7,21 +7,24 @@ class UserService extends Service {
     return this.app.model.User
   }
 
-  async index (params) {
-    const { attributes } = params
+  async index () {
     const users = await this.userModel.findAll({
-      attributes
+      attributes: {
+        exclude: ['password']
+      }
     })
     return users
   }
 
   async show (params) {
-    const { id, attributes } = params
+    const { id } = params
     const user = await this.userModel.findOne({
       where: {
         id
       },
-      attributes
+      attributes: {
+        exclude: ['password']
+      }
     })
     return user
   }

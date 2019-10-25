@@ -29,7 +29,3 @@ exports.middleware = [
   'currentUser',
   'errorHandler'
 ]
-
-exports.validate = {
-  convert: true
-}

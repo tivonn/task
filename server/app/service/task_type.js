@@ -7,10 +7,9 @@ class TaskTypeService extends Service {
     return this.app.model.TaskType
   }
 
-  async index (params) {
+  async index () {
     const { ctx, app } = this
     const { Op } = app.Sequelize
-    const { attributes } = params
     const taskTypes = await this.taskTypeModel.findAll({
       where: {
         [Op.or]: [
@@ -22,7 +21,7 @@ class TaskTypeService extends Service {
           }
         ]
       },
-      attributes
+      attributes: ['id', 'name', 'color']
     })
     return taskTypes
   }

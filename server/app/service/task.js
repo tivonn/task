@@ -2,6 +2,8 @@
 
 const Service = require('egg').Service
 
+const { TASK_STATUS } = require('../enum/task')
+
 class TaskService extends Service {
   get taskModel () {
     return this.app.model.Task
@@ -9,17 +11,20 @@ class TaskService extends Service {
 
   async index (params) {
     const { ctx } = this
-    // const { isCompleted } = params
+    const { status } = params
+    let where = {
+      creatorId: ctx.state.currentUser.id
+    }
+    if (status) {
+      where.status = Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === status)
+    }
     const tasks = await this.app.model.TaskType.findAll({
       attributes: ['id', 'name', 'color', 'isDefault'],
       include: {
         model: this.taskModel,
         as: 'task',
-        where: {
-          // isCompleted: isCompleted,
-          creatorId: ctx.state.currentUser.id
-        },
-        attributes: ['id', 'name', 'isCompleted', 'deadline']
+        where,
+        attributes: ['id', 'name', 'status', 'deadline']
       }
     })
     return tasks
@@ -27,12 +32,14 @@ class TaskService extends Service {
 
   async show (params) {
     const { ctx } = this
-    const { id, attributes } = params
+    const { id } = params
     const task = await this.taskModel.findOne({
       where: {
         id
       },
-      attributes
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
     })
     if (!task) {
       ctx.throw(404, '不存在该任务')
@@ -45,8 +52,9 @@ class TaskService extends Service {
 
   async create (params) {
     const { ctx } = this
+    // todo optimize default
     const updateDefault = {
-      isCompleted: false,
+      status: TASK_STATUS['unfinished'].value,
       creatorId: ctx.state.currentUser.id
     }
     const task = await this.taskModel.create(Object.assign({}, params, updateDefault))
