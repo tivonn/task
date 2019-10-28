@@ -23,7 +23,7 @@ const createRules = {
     required: true
   },
   deadline: {
-    type: 'date',
+    type: 'dateTime',
     required: false
   }
 }
@@ -48,7 +48,7 @@ const updateRules = {
     required: false
   },
   deadline: {
-    type: 'date',
+    type: 'dateTime',
     required: false
   },
   taskTypeId: {

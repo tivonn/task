@@ -41,12 +41,13 @@ module.exports = app => {
   })
 
   // User.associate = () => {
-  //   sequelize.Task.belongsToMany(sequelize.Task, {
+  //   sequelize.User.belongsToMany(sequelize.Task, {
   //     through: {
   //       model: sequelize.TaskPrincipal,
   //       unique: false,
   //     },
-  //     foreignKey: 'taskId'
+  //     foreignKey: 'principalId', //通过外键tagId
+  //     constraints: false
   //   })
   // }
 
