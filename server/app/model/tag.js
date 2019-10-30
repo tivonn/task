@@ -5,32 +5,42 @@ module.exports = app => {
   const sequelize = app.model
 
   const Tag = sequelize.define('tag', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: 'id',
+      comment: 'id'
+    },
     name: {
-      type: DataTypes.STRING(20),
-      allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'name',
+      comment: '名称'
+    },
+    creatorId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'creator_id',
+      comment: '创建人id'
     }
   })
 
   Tag.associate = () => {
-    // Tag.belongsToMany(sequelize.Post, {
-    //   through: {
-    //     model: sequelize.PostTag,
-    //     unique: false,
-    //   },
-    //   foreignKey: 'tagId', //通过外键tagId
-    //   constraints: false
-    // });
-    Tag.belongsToMany(sequelize.Post, {
+    sequelize.Tag.belongsTo(sequelize.User, {
+      as: 'creator',
+      foreignKey: 'creatorId',
+      targetKey: 'id'
+    })
+    sequelize.Tag.belongsToMany(sequelize.Task, {
       through: {
-        model: sequelize.TestPostTag,
+        model: sequelize.TaskTag,
         unique: false,
       },
-      foreignKey: 'tagId', //通过外键tagId
+      foreignKey: 'tagId',
       constraints: false
-    });
+    })
   }
-
-  // Tag.sync({force: true})
 
   return Tag
 }

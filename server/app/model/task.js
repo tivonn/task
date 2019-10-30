@@ -97,6 +97,14 @@ module.exports = app => {
       foreignKey: 'ccerId',
       targetKey: 'id'
     })
+    sequelize.Task.belongsToMany(sequelize.Tag, {
+      through: {
+        model: sequelize.TaskTag,
+        unique: false
+      },
+      foreignKey: 'taskId',
+      constraints: false
+    })
   }
 
   // Task.sync({ force: true })

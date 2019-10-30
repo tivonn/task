@@ -10,21 +10,38 @@ class TaskService extends Service {
   }
 
   async index (params) {
-    const { ctx } = this
+    const { ctx, app } = this
+    const { Op } = app.Sequelize
     const { status } = params
-    let where = {
+    let taskWhere = {
       creatorId: ctx.state.currentUser.id
     }
     if (status) {
-      where.status = Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === status)
+      taskWhere.status = Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === status)
     }
     const tasks = await this.app.model.TaskType.findAll({
+      where: {
+        [Op.or]: [
+          {
+            isDefault: true
+          },
+          {
+            creatorId: ctx.state.currentUser.id
+          }
+        ]
+      },
       attributes: ['id', 'name', 'color', 'isDefault'],
       include: {
         model: this.taskModel,
         as: 'task',
-        where,
-        attributes: ['id', 'name', 'status', 'deadline']
+        taskWhere,
+        attributes: ['id', 'name', 'status', 'deadline'],
+        include: {
+          model: this.app.model.Tag,
+          as: 'tags',
+          // todo how to delete associate column
+          attributes: ['id', 'name']
+        }
       }
     })
     return tasks
@@ -39,6 +56,11 @@ class TaskService extends Service {
       },
       attributes: {
         exclude: ['createdAt', 'updatedAt']
+      },
+      include: {
+        model: this.app.model.Tag,
+        as: 'tags',
+        attributes: ['id', 'name']
       }
     })
     if (!task) {

@@ -19,14 +19,15 @@ class StatisticsService extends Service {
         creatorId: ctx.state.currentUser.id
       }
     })
+    // todo
     const principalCount = -1
     const createCount = await this.taskModel.count({
       where: {
         creatorId: ctx.state.currentUser.id
       }
     })
+    // todo
     const ccCount = -1
-    // todo unfished and delay
     const delayCount = await this.taskModel.count({
       where: {
         status: 'unfinished',

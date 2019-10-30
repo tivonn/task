@@ -4,7 +4,7 @@ module.exports = app => {
   const DataTypes = app.Sequelize
   const sequelize = app.model
 
-  const TaskPrincipal = sequelize.define('task_principal', {
+  const TaskTag = sequelize.define('task_tag', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -15,18 +15,14 @@ module.exports = app => {
     taskId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'taskPrincipal',
-      field: 'task_id',
-      comment: '任务id'
+      unique: 'taskTag'
     },
-    principalId: {
+    tagId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'taskPrincipal',
-      field: 'principal_id',
-      comment: '负责人id'
+      unique: 'taskTag'
     }
   })
 
-  return TaskPrincipal
+  return TaskTag
 }

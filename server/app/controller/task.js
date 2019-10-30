@@ -92,7 +92,7 @@ class TaskController extends Controller {
   }
 
   async update () {
-    const ctx = this.ctx
+    const { ctx } = this
     const params = ctx.filterParams(updateRules, Object.assign({}, ctx.params, ctx.request.body))
     const task = await this.taskService.update(params)
     ctx.body = task
