@@ -12,6 +12,12 @@ class StatisticsController extends Controller {
     const allStatistics = await this.statisticsService.all()
     ctx.body = allStatistics
   }
+
+  async period () {
+    const { ctx } = this
+    const periodStatistics = await this.statisticsService.period()
+    ctx.body = periodStatistics
+  }
 }
 
 module.exports = StatisticsController

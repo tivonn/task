@@ -53,6 +53,11 @@ class StatisticsService extends Service {
     }
     return allStatistics
   }
+
+  async period () {
+    // todo
+    return []
+  }
 }
 
 module.exports = StatisticsService

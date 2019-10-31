@@ -54,7 +54,7 @@ class TagService extends Service {
       }
     })
     if (!tag) {
-      ctx.throw(404, '不存在该任务类型')
+      ctx.throw(404, '不存在该标签')
     }
     if (tag.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(422, '无权限删除')
