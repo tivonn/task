@@ -2,6 +2,17 @@
 
 const Controller = require('egg').Controller
 
+const getAllRules = {
+  key: {
+    type: 'string',
+    required: false
+  },
+  size: {
+    type: 'number',
+    required: false
+  }
+}
+
 const getRules = {
   id: {
     type: 'number',
@@ -16,7 +27,8 @@ class UserController extends Controller {
 
   async index () {
     const { ctx } = this
-    const users = await this.userService.index()
+    const params = ctx.filterParams(getAllRules, Object.assign({}, ctx.query))
+    const users = await this.userService.index(params)
     ctx.body = users
   }
 

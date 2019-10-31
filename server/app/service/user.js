@@ -7,8 +7,14 @@ class UserService extends Service {
     return this.app.model.User
   }
 
-  async index () {
+  async index (params) {
+    const { app } = this
+    const { Op } = app.Sequelize
+    const { key, size = 20 } = params
+    const where = key ? { name: { [Op.like]: `%${key}%` } } : {}
     const users = await this.userModel.findAll({
+      where,
+      limit: size,
       attributes: {
         exclude: ['password']
       }

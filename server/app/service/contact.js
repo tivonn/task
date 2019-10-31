@@ -26,6 +26,9 @@ class ContactService extends Service {
 
   async create (params) {
     const { ctx } = this
+    if (params.contactId === ctx.state.currentUser.id) {
+      ctx.throw(422, '不允许将自己设置为常联人员')
+    }
     const updateDefault = {
       creatorId: ctx.state.currentUser.id
     }

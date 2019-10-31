@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller
 
-const getRules = {
+const getAllRules = {
   id: {
     type: 'number',
     required: false,
@@ -12,6 +12,8 @@ const getRules = {
     required: false
   }
 }
+
+const getRules = getAllRules
 
 const createRules = {
   name: {
@@ -72,7 +74,7 @@ class TaskController extends Controller {
 
   async index () {
     const { ctx } = this
-    const params = ctx.filterParams(getRules, Object.assign({}, ctx.query))
+    const params = ctx.filterParams(getAllRules, Object.assign({}, ctx.query))
     const tasks = await this.taskService.index(params)
     ctx.body = tasks
   }
@@ -100,6 +102,7 @@ class TaskController extends Controller {
 
   async destroy () {
     const { ctx } = this
+    // todo deleteRules
     const params = Object.assign({}, ctx.params)
     await this.taskService.destroy(params)
   }
