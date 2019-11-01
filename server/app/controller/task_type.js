@@ -13,6 +13,28 @@ const createRules = {
   }
 }
 
+const updateRules = {
+  id: {
+    type: 'number',
+    required: true
+  },
+  name: {
+    type: 'string',
+    required: false
+  },
+  color: {
+    type: 'string',
+    required: false
+  }
+}
+
+const deleteRules = {
+  id: {
+    type: 'number',
+    required: true
+  }
+}
+
 class TaskTypeController extends Controller {
   get taskTypeService () {
     return this.ctx.service.taskType
@@ -31,9 +53,16 @@ class TaskTypeController extends Controller {
     ctx.body = taskType
   }
 
+  async update () {
+    const { ctx } = this
+    const params = ctx.filterParams(updateRules, Object.assign({}, ctx.params, ctx.request.body))
+    const taskType = await this.taskTypeService.update(params)
+    ctx.body = taskType
+  }
+
   async destroy () {
     const { ctx } = this
-    const params = Object.assign({}, ctx.params)
+    const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.taskTypeService.destroy(params)
   }
 }

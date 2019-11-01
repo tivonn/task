@@ -7,12 +7,22 @@ class TagService extends Service {
     return this.app.model.Tag
   }
 
-  async index () {
-    const { ctx } = this
+  async index (params) {
+    const { ctx, app } = this
+    const { Op } = app.Sequelize
+    const { key } = params
+    let where = key
+      ?
+      {
+        name:
+          {
+            [Op.like]: `%${key}%`
+          }
+      }
+      : {}
+    where.creatorId = ctx.state.currentUser.id
     const tags = await this.tagModel.findAll({
-      where: {
-        creatorId: ctx.state.currentUser.id
-      },
+      where,
       attributes: ['id', 'name']
     })
     return tags

@@ -9,6 +9,13 @@ const createRules = {
   }
 }
 
+const deleteRules = {
+  contactId: {
+    type: 'number',
+    required: true
+  }
+}
+
 class ContactController extends Controller {
   get contactService () {
     return this.ctx.service.contact
@@ -29,7 +36,7 @@ class ContactController extends Controller {
 
   async destroy () {
     const { ctx } = this
-    const params = Object.assign({}, ctx.params)
+    const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.contactService.destroy(params)
   }
 }

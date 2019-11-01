@@ -23,6 +23,7 @@ class StatisticsService extends Service {
     const principalCount = -1
     const createCount = await this.taskModel.count({
       where: {
+        status: 'unfinished',
         creatorId: ctx.state.currentUser.id
       }
     })

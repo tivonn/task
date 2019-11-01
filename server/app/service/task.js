@@ -74,6 +74,18 @@ class TaskService extends Service {
 
   async create (params) {
     const { ctx } = this
+    const { taskTypeId } = params
+    const taskType = await this.app.model.TaskType.findOne({
+      where: {
+        id: taskTypeId
+      }
+    })
+    if (!taskType) {
+      ctx.throw(404, '不存在该任务类型')
+    }
+    if (taskType.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(404, '无权限创建该任务类型的任务')
+    }
     // todo optimize default
     const updateDefault = {
       status: TASK_STATUS['unfinished'].value,

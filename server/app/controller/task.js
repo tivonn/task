@@ -67,6 +67,13 @@ const updateRules = {
   }
 }
 
+const deleteRules = {
+  id: {
+    type: 'number',
+    required: true
+  }
+}
+
 class TaskController extends Controller {
   get taskService () {
     return this.ctx.service.task
@@ -102,8 +109,7 @@ class TaskController extends Controller {
 
   async destroy () {
     const { ctx } = this
-    // todo deleteRules
-    const params = Object.assign({}, ctx.params)
+    const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.taskService.destroy(params)
   }
 }

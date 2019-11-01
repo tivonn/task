@@ -36,6 +36,27 @@ class TaskTypeService extends Service {
     return taskType
   }
 
+  async update (params) {
+    const { ctx } = this
+    const { id } = params
+    const taskType = await this.taskTypeModel.findOne({
+      where: {
+        id
+      }
+    })
+    if (!taskType) {
+      ctx.throw(404, '不存在该任务类型')
+    }
+    if (taskType.isDefault) {
+      ctx.throw(422, '不允许修改默认任务类型')
+    }
+    if (taskType.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(422, '无权限更新')
+    }
+    await taskType.update(params)
+    return taskType
+  }
+
   async destroy (params) {
     const { ctx } = this
     const { id } = params
@@ -52,6 +73,14 @@ class TaskTypeService extends Service {
     }
     if (taskType.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(422, '无权限删除')
+    }
+    const taskCount = await this.app.model.Task.count({
+      where: {
+        taskTypeId: taskType.id
+      }
+    })
+    if (taskCount) {
+      ctx.throw(422, '不允许删除有任务的任务类型')
     }
     await taskType.destroy()
     ctx.status = 200

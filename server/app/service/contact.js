@@ -17,7 +17,7 @@ class ContactService extends Service {
         model: app.model.User,
         as: 'contact',
         attributes: {
-          exclude: ['password']
+          exclude: ['password', 'createdAt', 'updatedAt']
         }
       }
     }).map(item => item.contact)
@@ -26,8 +26,18 @@ class ContactService extends Service {
 
   async create (params) {
     const { ctx } = this
-    if (params.contactId === ctx.state.currentUser.id) {
+    const { contactId } = params
+    if (contactId === ctx.state.currentUser.id) {
       ctx.throw(422, '不允许将自己设置为常联人员')
+    }
+    const contact = await this.userContactModel.findOne({
+      where: {
+        creatorId: ctx.state.currentUser.id,
+        contactId
+      }
+    })
+    if (contact) {
+      ctx.throw(422, '该人员已在常联人员中')
     }
     const updateDefault = {
       creatorId: ctx.state.currentUser.id

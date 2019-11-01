@@ -11,12 +11,20 @@ class UserService extends Service {
     const { app } = this
     const { Op } = app.Sequelize
     const { key, size = 20 } = params
-    const where = key ? { name: { [Op.like]: `%${key}%` } } : {}
+    const where = key
+      ?
+      {
+        name:
+          {
+            [Op.like]: `%${key}%`
+          }
+      }
+      : {}
     const users = await this.userModel.findAll({
       where,
       limit: size,
       attributes: {
-        exclude: ['password']
+        exclude: ['password', 'createdAt', 'updatedAt']
       }
     })
     return users
@@ -29,7 +37,7 @@ class UserService extends Service {
         id
       },
       attributes: {
-        exclude: ['password']
+        exclude: ['password', 'createdAt', 'updatedAt']
       }
     })
     return user

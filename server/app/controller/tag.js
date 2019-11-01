@@ -2,6 +2,13 @@
 
 const Controller = require('egg').Controller
 
+const getAllRules = {
+  key: {
+    type: 'string',
+    required: false
+  }
+}
+
 const createRules = {
   name: {
     type: 'string',
@@ -20,6 +27,13 @@ const updateRules = {
   }
 }
 
+const deleteRules = {
+  id: {
+    type: 'number',
+    required: true
+  }
+}
+
 class TagController extends Controller {
   get tagService () {
     return this.ctx.service.tag
@@ -27,7 +41,8 @@ class TagController extends Controller {
 
   async index () {
     const { ctx } = this
-    const tags = await this.tagService.index()
+    const params = ctx.filterParams(getAllRules, Object.assign({}, ctx.query))
+    const tags = await this.tagService.index(params)
     ctx.body = tags
   }
 
@@ -47,7 +62,7 @@ class TagController extends Controller {
 
   async destroy () {
     const { ctx } = this
-    const params = Object.assign({}, ctx.params)
+    const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.tagService.destroy(params)
   }
 }
