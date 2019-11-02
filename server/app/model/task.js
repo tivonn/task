@@ -45,6 +45,12 @@ module.exports = app => {
       field: 'deadline',
       comment: '截止时间'
     },
+    reminderTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'reminder_time',
+      comment: '提醒时间'
+    },
     taskTypeId: {
       type: DataTypes.INTEGER,
       allowNull: false,

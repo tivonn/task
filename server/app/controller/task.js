@@ -53,6 +53,10 @@ const updateRules = {
     type: 'dateTime',
     required: false
   },
+  reminderTime: {
+    type: 'dateTime',
+    required: false
+  },
   taskTypeId: {
     type: 'number',
     required: false
@@ -63,6 +67,11 @@ const updateRules = {
     itemType: 'number'
   },
   ccerIds: {
+    type: 'array',
+    required: false,
+    itemType: 'number'
+  },
+  tagIds: {
     type: 'array',
     required: false,
     itemType: 'number'

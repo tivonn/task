@@ -97,7 +97,7 @@ class TaskService extends Service {
   }
 
   async update (params) {
-    const { ctx } = this
+    const { ctx, app } = this
     const { id } = params
     const task = await this.taskModel.findOne({
       where: {
@@ -113,10 +113,19 @@ class TaskService extends Service {
     // 只接收单个字段的更新
     if (params.hasOwnProperty('principalIds')) {
       const { principalIds } = params
-      task.setPrincipals(principalIds)
+      await task.setPrincipals(principalIds)
     } else if (params.hasOwnProperty('ccerIds')) {
       const { ccerIds } = params
-      task.setCcers(ccerIds)
+      await task.setCcers(ccerIds)
+    } else if (params.hasOwnProperty('tagIds')) {
+      const { tagIds } = params
+      const tags = await app.model.Tag.findAll({
+        where: {
+          id: tagIds,
+          creatorId: ctx.state.currentUser.id
+        }
+      })
+      await task.setTags(tags)
     } else {
       await task.update(params)
     }
