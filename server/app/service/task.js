@@ -21,14 +21,11 @@ class TaskService extends Service {
     }
     const tasks = await app.model.TaskType.findAll({
       where: {
-        [Op.or]: [
-          {
-            isDefault: true
-          },
-          {
-            creatorId: ctx.state.currentUser.id
-          }
-        ]
+        [Op.or]: [{
+          isDefault: true
+        }, {
+          creatorId: ctx.state.currentUser.id
+        }]
       },
       attributes: ['id', 'name', 'color', 'isDefault'],
       include: {

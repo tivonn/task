@@ -79,6 +79,11 @@ module.exports = app => {
       foreignKey: 'taskId',
       constraints: false
     })
+    sequelize.Task.hasMany(sequelize.TaskPrincipal, {
+      as: 'principal',
+      sourceKey: 'id',
+      targetKey: 'taskId'
+    })
     sequelize.Task.belongsToMany(sequelize.User, {
       as: 'principals',
       through: {
@@ -87,6 +92,11 @@ module.exports = app => {
       },
       foreignKey: 'taskId',
       constraints: false
+    })
+    sequelize.Task.hasMany(sequelize.TaskCcer, {
+      as: 'ccer',
+      sourceKey: 'id',
+      targetKey: 'taskId'
     })
     sequelize.Task.belongsToMany(sequelize.User, {
       as: 'ccers',

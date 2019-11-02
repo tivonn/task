@@ -19,16 +19,36 @@ class StatisticsService extends Service {
         creatorId: ctx.state.currentUser.id
       }
     })
-    // todo
-    const principalCount = -1
+    const principalCount = await this.taskModel.count({
+      where: {
+        status: 'unfinished'
+      },
+      include: {
+        model: app.model.TaskPrincipal,
+        as: 'principal',
+        where: {
+          principalId: ctx.state.currentUser.id
+        }
+      }
+    })
     const createCount = await this.taskModel.count({
       where: {
         status: 'unfinished',
         creatorId: ctx.state.currentUser.id
       }
     })
-    // todo
-    const ccCount = -1
+    const ccCount = await this.taskModel.count({
+      where: {
+        status: 'unfinished'
+      },
+      include: {
+        model: app.model.TaskCcer,
+        as: 'ccer',
+        where: {
+          ccerId: ctx.state.currentUser.id
+        }
+      }
+    })
     const delayCount = await this.taskModel.count({
       where: {
         status: 'unfinished',

@@ -12,14 +12,11 @@ class TaskTypeService extends Service {
     const { Op } = app.Sequelize
     const taskTypes = await this.taskTypeModel.findAll({
       where: {
-        [Op.or]: [
-          {
-            isDefault: true
-          },
-          {
-            creatorId: ctx.state.currentUser.id
-          }
-        ]
+        [Op.or]: [{
+          isDefault: true
+        }, {
+          creatorId: ctx.state.currentUser.id
+        }]
       },
       attributes: ['id', 'name', 'color']
     })
