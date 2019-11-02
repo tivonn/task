@@ -57,13 +57,15 @@ const updateRules = {
     type: 'number',
     required: false
   },
-  principalId: {
-    type: 'number',
-    required: false
+  principalIds: {
+    type: 'array',
+    required: false,
+    itemType: 'number'
   },
-  ccerId: {
-    type: 'number',
-    required: false
+  ccerIds: {
+    type: 'array',
+    required: false,
+    itemType: 'number'
   }
 }
 

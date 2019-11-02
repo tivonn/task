@@ -40,16 +40,26 @@ module.exports = app => {
     }
   })
 
-  // User.associate = () => {
-  //   sequelize.User.belongsToMany(sequelize.Task, {
-  //     through: {
-  //       model: sequelize.TaskPrincipal,
-  //       unique: false,
-  //     },
-  //     foreignKey: 'principalId', //通过外键tagId
-  //     constraints: false
-  //   })
-  // }
+  User.associate = () => {
+    sequelize.User.belongsToMany(sequelize.Task, {
+      as: 'principalTask',
+      through: {
+        model: app.model.TaskPrincipal,
+        unique: false,
+      },
+      foreignKey: 'principalId',
+      constraints: false
+    })
+    sequelize.User.belongsToMany(sequelize.Task, {
+      as: 'ccerTask',
+      through: {
+        model: app.model.TaskCcer,
+        unique: false,
+      },
+      foreignKey: 'ccerId',
+      constraints: false
+    })
+  }
 
   ;(async () => {
     // 默认人员

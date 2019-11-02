@@ -58,7 +58,7 @@ class TaskTypeService extends Service {
   }
 
   async destroy (params) {
-    const { ctx } = this
+    const { ctx, app } = this
     const { id } = params
     const taskType = await this.taskTypeModel.findOne({
       where: {
@@ -74,7 +74,7 @@ class TaskTypeService extends Service {
     if (taskType.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(422, '无权限删除')
     }
-    const taskCount = await this.app.model.Task.count({
+    const taskCount = await app.model.Task.count({
       where: {
         taskTypeId: taskType.id
       }

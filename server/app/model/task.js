@@ -56,18 +56,6 @@ module.exports = app => {
       allowNull: false,
       field: 'creator_id',
       comment: '创建人id'
-    },
-    principalId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      field: 'principal_id',
-      comment: '负责人id'
-    },
-    ccerId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      field: 'ccer_id',
-      comment: '抄送人id'
     }
   })
 
@@ -82,22 +70,8 @@ module.exports = app => {
       foreignKey: 'creatorId',
       targetKey: 'id'
     })
-    sequelize.Task.belongsTo(sequelize.User, {
-      as: 'principal',
-      foreignKey: 'principalId',
-      targetKey: 'id'
-      // through: {
-      //   model: sequelize.TaskPrincipal,
-      //   unique: false,
-      // },
-      // foreignKey: 'principalId'
-    })
-    sequelize.Task.belongsTo(sequelize.User, {
-      as: 'ccer',
-      foreignKey: 'ccerId',
-      targetKey: 'id'
-    })
     sequelize.Task.belongsToMany(sequelize.Tag, {
+      as: 'tags',
       through: {
         model: sequelize.TaskTag,
         unique: false
@@ -105,9 +79,25 @@ module.exports = app => {
       foreignKey: 'taskId',
       constraints: false
     })
+    sequelize.Task.belongsToMany(sequelize.User, {
+      as: 'principals',
+      through: {
+        model: app.model.TaskPrincipal,
+        unique: false,
+      },
+      foreignKey: 'taskId',
+      constraints: false
+    })
+    sequelize.Task.belongsToMany(sequelize.User, {
+      as: 'ccers',
+      through: {
+        model: app.model.TaskCcer,
+        unique: false,
+      },
+      foreignKey: 'taskId',
+      constraints: false
+    })
   }
-
-  // Task.sync({ force: true })
 
   return Task
 }

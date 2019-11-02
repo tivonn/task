@@ -19,7 +19,7 @@ class TaskService extends Service {
     if (status) {
       taskWhere.status = Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === status)
     }
-    const tasks = await this.app.model.TaskType.findAll({
+    const tasks = await app.model.TaskType.findAll({
       where: {
         [Op.or]: [
           {
@@ -37,7 +37,7 @@ class TaskService extends Service {
         taskWhere,
         attributes: ['id', 'name', 'status', 'deadline'],
         include: {
-          model: this.app.model.Tag,
+          model: app.model.Tag,
           as: 'tags',
           // todo how to delete associate column
           attributes: ['id', 'name']
@@ -48,7 +48,7 @@ class TaskService extends Service {
   }
 
   async show (params) {
-    const { ctx } = this
+    const { ctx, app } = this
     const { id } = params
     const task = await this.taskModel.findOne({
       where: {
@@ -57,11 +57,15 @@ class TaskService extends Service {
       attributes: {
         exclude: ['createdAt', 'updatedAt']
       },
-      include: {
-        model: this.app.model.Tag,
+      include: [{
+        model: app.model.Tag,
         as: 'tags',
         attributes: ['id', 'name']
-      }
+      }, {
+        model: app.model.User,
+        as: 'principals',
+        exclude: ['password', 'createdAt', 'updatedAt']
+      }]
     })
     if (!task) {
       ctx.throw(404, '不存在该任务')
@@ -73,9 +77,9 @@ class TaskService extends Service {
   }
 
   async create (params) {
-    const { ctx } = this
+    const { ctx, app } = this
     const { taskTypeId } = params
-    const taskType = await this.app.model.TaskType.findOne({
+    const taskType = await app.model.TaskType.findOne({
       where: {
         id: taskTypeId
       }
@@ -83,7 +87,7 @@ class TaskService extends Service {
     if (!taskType) {
       ctx.throw(404, '不存在该任务类型')
     }
-    if (taskType.creatorId !== ctx.state.currentUser.id) {
+    if (!taskType.isDefault && taskType.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(404, '无权限创建该任务类型的任务')
     }
     // todo optimize default
@@ -109,7 +113,17 @@ class TaskService extends Service {
     if (task.creatorId !== ctx.state.currentUser.id) {
       ctx.throw(422, '无权限更新')
     }
-    await task.update(params)
+    // 只接收单个字段的更新
+    if (params.hasOwnProperty('principalIds')) {
+      const { principalIds } = params
+      task.setPrincipals(principalIds)
+    } else if (params.hasOwnProperty('ccerIds')) {
+      const { ccerIds } = params
+      task.setCcers(ccerIds)
+    } else {
+      await task.update(params)
+    }
+    // todo associated search
     return task
   }
 

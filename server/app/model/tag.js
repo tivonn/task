@@ -33,6 +33,7 @@ module.exports = app => {
       targetKey: 'id'
     })
     sequelize.Tag.belongsToMany(sequelize.Task, {
+      as: 'tasks',
       through: {
         model: sequelize.TaskTag,
         unique: false,
