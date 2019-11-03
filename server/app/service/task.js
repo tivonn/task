@@ -17,7 +17,7 @@ class TaskService extends Service {
       creatorId: ctx.state.currentUser.id
     }
     if (status) {
-      taskWhere.status = Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === status)
+      taskWhere.status = status
     }
     const tasks = await app.model.TaskType.findAll({
       where: {
@@ -31,7 +31,7 @@ class TaskService extends Service {
       include: {
         model: this.taskModel,
         as: 'task',
-        taskWhere,
+        where: taskWhere,
         attributes: ['id', 'name', 'status', 'deadline'],
         include: {
           model: app.model.Tag,

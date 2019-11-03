@@ -15,13 +15,13 @@ class StatisticsService extends Service {
     const unfinishedCount = await this.taskModel.count({
       // todo create or principal or cc
       where: {
-        status: 'unfinished',
+        status: TASK_STATUS['unfinished'].value,
         creatorId: ctx.state.currentUser.id
       }
     })
     const principalCount = await this.taskModel.count({
       where: {
-        status: 'unfinished'
+        status: TASK_STATUS['unfinished'].value
       },
       include: {
         model: app.model.TaskPrincipal,
@@ -33,13 +33,13 @@ class StatisticsService extends Service {
     })
     const createCount = await this.taskModel.count({
       where: {
-        status: 'unfinished',
+        status: TASK_STATUS['unfinished'].value,
         creatorId: ctx.state.currentUser.id
       }
     })
     const ccCount = await this.taskModel.count({
       where: {
-        status: 'unfinished'
+        status: TASK_STATUS['unfinished'].value
       },
       include: {
         model: app.model.TaskCcer,
@@ -51,7 +51,7 @@ class StatisticsService extends Service {
     })
     const delayCount = await this.taskModel.count({
       where: {
-        status: 'unfinished',
+        status: TASK_STATUS['unfinished'].value,
         deadline: {
           [Op.lt]: new Date()
         },
@@ -60,7 +60,7 @@ class StatisticsService extends Service {
     })
     const finishedCount = await this.taskModel.count({
       where: {
-        status: 'finished',
+        status: TASK_STATUS['finished'].value,
         creatorId: ctx.state.currentUser.id
       }
     })

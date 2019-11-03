@@ -1,7 +1,5 @@
 'use strict'
 
-const { TASK_STATUS } = require('../enum/task')
-
 module.exports = app => {
   const DataTypes = app.Sequelize
   const sequelize = app.model
@@ -27,15 +25,8 @@ module.exports = app => {
       comment: '描述'
     },
     status: {
-      type: DataTypes.ENUM,
-      values: Object.keys(TASK_STATUS),
+      type: DataTypes.INTEGER,
       allowNull: false,
-      get () {
-        return TASK_STATUS[this.getDataValue('status')].value
-      },
-      set (value) {
-        this.setDataValue('status', Object.keys(TASK_STATUS).find(key => TASK_STATUS[key].value === value))
-      },
       field: 'status',
       comment: '状态'
     },
@@ -44,6 +35,12 @@ module.exports = app => {
       allowNull: true,
       field: 'deadline',
       comment: '截止时间'
+    },
+    priority: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'priority',
+      comment: '优先级'
     },
     reminderTime: {
       type: DataTypes.DATE,

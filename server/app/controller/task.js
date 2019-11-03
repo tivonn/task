@@ -2,6 +2,8 @@
 
 const Controller = require('egg').Controller
 
+const { TASK_STATUS, TASK_PRIORITY } = require('../enum/task')
+
 const getAllRules = {
   id: {
     type: 'number',
@@ -46,12 +48,18 @@ const updateRules = {
     allowEmpty: true
   },
   status: {
-    type: 'number',
-    required: false
+    type: 'intEnum',
+    required: false,
+    enum: TASK_STATUS
   },
   deadline: {
     type: 'dateTime',
     required: false
+  },
+  priority: {
+    type: 'intEnum',
+    required: false,
+    enum: TASK_PRIORITY
   },
   reminderTime: {
     type: 'dateTime',
