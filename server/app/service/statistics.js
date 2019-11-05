@@ -16,7 +16,11 @@ class StatisticsService extends Service {
       // todo create or principal or cc
       where: {
         status: TASK_STATUS['unfinished'].value,
-        creatorId: ctx.state.currentUser.id
+        [Op.or]: [{
+          creatorId: ctx.state.currentUser.id
+        },
+          app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`)
+        ]
       }
     })
     const principalCount = await this.taskModel.count({

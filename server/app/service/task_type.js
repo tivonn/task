@@ -44,11 +44,8 @@ class TaskTypeService extends Service {
     if (!taskType) {
       ctx.throw(404, '不存在该任务类型')
     }
-    if (taskType.isDefault) {
-      ctx.throw(422, '不允许修改默认任务类型')
-    }
-    if (taskType.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限更新')
+    if (taskType.isDefault || taskType.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(403, '无权限更新')
     }
     await taskType.update(params)
     return taskType
@@ -65,11 +62,8 @@ class TaskTypeService extends Service {
     if (!taskType) {
       ctx.throw(404, '不存在该任务类型')
     }
-    if (taskType.isDefault) {
-      ctx.throw(422, '默认任务类型无法删除')
-    }
-    if (taskType.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限删除')
+    if (taskType.isDefault || taskType.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(403, '无权限删除')
     }
     const taskCount = await app.model.Task.count({
       where: {

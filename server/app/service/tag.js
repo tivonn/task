@@ -49,7 +49,7 @@ class TagService extends Service {
       ctx.throw(404, '不存在该标签')
     }
     if (tag.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限更新')
+      ctx.throw(403, '无权限更新')
     }
     await tag.update(params)
     return tag
@@ -67,7 +67,7 @@ class TagService extends Service {
       ctx.throw(404, '不存在该标签')
     }
     if (tag.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限删除')
+      ctx.throw(403, '无权限删除')
     }
     await tag.destroy()
     ctx.status = 200

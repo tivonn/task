@@ -15,7 +15,12 @@ const getAllRules = {
   }
 }
 
-const getRules = getAllRules
+const getRules = {
+  id: {
+    type: 'number',
+    required: false,
+  }
+}
 
 const createRules = {
   name: {

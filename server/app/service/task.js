@@ -85,7 +85,7 @@ class TaskService extends Service {
       ctx.throw(404, '不存在该任务类型')
     }
     if (!taskType.isDefault && taskType.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(404, '无权限创建该任务类型的任务')
+      ctx.throw(403, '无权限创建')
     }
     // todo optimize default
     const updateDefault = {
@@ -108,9 +108,9 @@ class TaskService extends Service {
       ctx.throw(404, '不存在该任务')
     }
     if (task.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限更新')
+      ctx.throw(403, '无权限更新')
     }
-    // 只接收单个字段的更新
+    // 更新关联表
     if (params.hasOwnProperty('principalIds')) {
       const { principalIds } = params
       await task.setPrincipals(principalIds)
@@ -126,11 +126,10 @@ class TaskService extends Service {
         }
       })
       await task.setTags(tags)
-    } else {
-      await task.update(params)
     }
-    // todo associated search
-    return task
+    // 更新主表
+    await task.update(params)
+    return this.show({ id })
   }
 
   async destroy (params) {
@@ -145,7 +144,7 @@ class TaskService extends Service {
       ctx.throw(404, '不存在该任务')
     }
     if (task.creatorId !== ctx.state.currentUser.id) {
-      ctx.throw(422, '无权限删除')
+      ctx.throw(403, '无权限删除')
     }
     await task.destroy()
     ctx.status = 200
