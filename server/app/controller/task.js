@@ -98,6 +98,8 @@ const deleteRules = {
   }
 }
 
+const getMemberRules = getRules
+
 class TaskController extends Controller {
   get taskService () {
     return this.ctx.service.task
@@ -135,6 +137,13 @@ class TaskController extends Controller {
     const { ctx } = this
     const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.taskService.destroy(params)
+  }
+
+  async showMembers () {
+    const { ctx } = this
+    const params = ctx.filterParams(getMemberRules, Object.assign({}, ctx.params))
+    const members = await this.taskService.getMembers(params)
+    ctx.body = members
   }
 }
 

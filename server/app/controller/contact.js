@@ -23,14 +23,14 @@ class ContactController extends Controller {
 
   async index () {
     const { ctx } = this
-    const allContact = await this.contactService.index()
-    ctx.body = allContact
+    const contacts = await this.contactService.index()
+    ctx.body = contacts
   }
 
   async create () {
     const { ctx } = this
     const params = ctx.filterParams(createRules, Object.assign({}, ctx.request.body))
-    // todo how to warn unique
+    // todo how to find or create
     await this.contactService.create(params)
   }
 

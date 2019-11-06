@@ -55,13 +55,27 @@ class TaskService extends Service {
         exclude: ['createdAt', 'updatedAt']
       },
       include: [{
+        model: app.model.User,
+        as: 'creator',
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt']
+        }
+      }, {
         model: app.model.Tag,
         as: 'tags',
         attributes: ['id', 'name']
       }, {
         model: app.model.User,
         as: 'principals',
-        exclude: ['password', 'createdAt', 'updatedAt']
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt']
+        }
+      }, {
+        model: app.model.User,
+        as: 'ccers',
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt']
+        }
       }]
     })
     if (!task) {
@@ -129,7 +143,7 @@ class TaskService extends Service {
     }
     // 更新主表
     await task.update(params)
-    return this.show({ id })
+    return await this.show({ id })
   }
 
   async destroy (params) {
@@ -148,6 +162,14 @@ class TaskService extends Service {
     }
     await task.destroy()
     ctx.status = 200
+  }
+
+  async getMembers (params) {
+    const { ctx, app } = this
+    const { id } = params
+    const task = await this.show({ id })
+    const members = ctx.helper.uniqueArray([task.creator].concat(task.principals).concat(task.ccers), 'id')
+    return members
   }
 }
 

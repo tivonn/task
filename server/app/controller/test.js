@@ -28,7 +28,6 @@ class TestController extends Controller {
         id: [2,4]
       }
     })
-    console.log(principals)
     task.setPrincipals([1])
     ctx.body = 'hello world'
   }
