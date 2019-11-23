@@ -10,7 +10,7 @@ const createRules = {
 }
 
 const deleteRules = {
-  contactId: {
+  id: {
     type: 'number',
     required: true
   }

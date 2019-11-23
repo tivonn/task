@@ -48,15 +48,17 @@ class ContactService extends Service {
 
   async destroy (params) {
     const { ctx } = this
-    const { contactId } = params
+    const { id } = params
     const userContact = await this.userContactModel.findOne({
       where: {
-        creatorId: ctx.state.currentUser.id,
-        contactId
+        id
       }
     })
     if (!userContact) {
       ctx.throw(404, '不存在该常联人员')
+    }
+    if (userContact.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(403, '无权限删除')
     }
     await userContact.destroy()
     ctx.status = 200

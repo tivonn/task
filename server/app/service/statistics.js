@@ -59,13 +59,23 @@ class StatisticsService extends Service {
         deadline: {
           [Op.lt]: new Date()
         },
-        creatorId: ctx.state.currentUser.id
+        [Op.or]: [{
+          creatorId: ctx.state.currentUser.id
+        },
+          app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+          app.Sequelize.literal(`exists(select 1 from task_ccer where ccer_id = ${ctx.state.currentUser.id} and task_id = task.id)`)
+        ]
       }
     })
     const finishedCount = await this.taskModel.count({
       where: {
         status: TASK_STATUS['finished'].value,
-        creatorId: ctx.state.currentUser.id
+        [Op.or]: [{
+          creatorId: ctx.state.currentUser.id
+        },
+          app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+          app.Sequelize.literal(`exists(select 1 from task_ccer where ccer_id = ${ctx.state.currentUser.id} and task_id = task.id)`)
+        ]
       }
     })
     const allStatistics = {

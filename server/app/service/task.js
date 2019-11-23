@@ -165,7 +165,7 @@ class TaskService extends Service {
   }
 
   async getMembers (params) {
-    const { ctx, app } = this
+    const { ctx } = this
     const { id } = params
     const task = await this.show({ id })
     const members = ctx.helper.uniqueArray([task.creator].concat(task.principals).concat(task.ccers), 'id')
