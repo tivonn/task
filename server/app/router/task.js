@@ -8,5 +8,6 @@ module.exports = app => {
   taskRouter.post('/', controller.task.create)
   taskRouter.put('/:id', controller.task.update)
   taskRouter.delete('/:id', controller.task.destroy)
+  taskRouter.post('/:taskId/rate/task', controller.task.taskRate)
   taskRouter.get('/:id/member', controller.task.showMembers)
 }

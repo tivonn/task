@@ -98,6 +98,30 @@ const deleteRules = {
   }
 }
 
+const updateTaskRateRules = {
+  taskId: {
+    type: 'number',
+    required: true,
+  },
+  quality: {
+    type: 'int',
+    required: true,
+    max: 5,
+    min: 1
+  },
+  speed: {
+    type: 'int',
+    required: true,
+    max: 5,
+    min: 1
+  },
+  comment: {
+    type: 'string',
+    required: true,
+    allowEmpty: true
+  },
+}
+
 const getMemberRules = getRules
 
 class TaskController extends Controller {
@@ -137,6 +161,12 @@ class TaskController extends Controller {
     const { ctx } = this
     const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
     await this.taskService.destroy(params)
+  }
+
+  async taskRate () {
+    const { ctx } = this
+    const params = ctx.filterParams(updateTaskRateRules, Object.assign({}, ctx.params, ctx.request.body))
+    await this.taskService.taskRate(params)
   }
 
   async showMembers () {

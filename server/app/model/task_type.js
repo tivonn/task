@@ -39,15 +39,15 @@ module.exports = app => {
   })
 
   TaskType.associate = () => {
+    sequelize.TaskType.hasMany(sequelize.Task, {
+      as: 'tasks',
+      sourceKey: 'id',
+      targetKey: 'taskTypeId'
+    })
     sequelize.TaskType.belongsTo(sequelize.User, {
       as: 'creator',
       foreignKey: 'creatorId',
       targetKey: 'id'
-    })
-    sequelize.TaskType.hasMany(sequelize.Task, {
-      as: 'task',
-      sourceKey: 'id',
-      targetKey: 'taskTypeId'
     })
   }
 

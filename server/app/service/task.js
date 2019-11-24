@@ -19,7 +19,14 @@ class TaskService extends Service {
     if (status) {
       taskWhere.status = status
     }
-    const tasks = await app.model.TaskType.findAll({
+    const attributes = ['id', 'name', 'status', 'deadline']
+    const include = {
+      model: app.model.Tag,
+      as: 'tags',
+      // todo how to delete associate column
+      attributes: ['id', 'name']
+    }
+    const createTasks = await app.model.TaskType.findAll({
       where: {
         [Op.or]: [{
           isDefault: true
@@ -30,18 +37,47 @@ class TaskService extends Service {
       attributes: ['id', 'name', 'color', 'isDefault'],
       include: {
         model: this.taskModel,
-        as: 'task',
+        as: 'tasks',
         where: taskWhere,
-        attributes: ['id', 'name', 'status', 'deadline'],
-        include: {
-          model: app.model.Tag,
-          as: 'tags',
-          // todo how to delete associate column
-          attributes: ['id', 'name']
-        }
+        attributes,
+        include
       }
     })
+    const principalTasks = await this.taskFactory({
+      name: '我负责的',
+      color: '#55c580',
+      tasks: await this.taskModel.findAll({
+        where: app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+        attributes,
+        include
+      })
+    })
+    const ccTasks = await this.taskFactory({
+      name: '抄送我的',
+      color: '#409eff',
+      tasks:  await this.taskModel.findAll({
+        where: app.Sequelize.literal(`exists(select 1 from task_ccer where ccer_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+        attributes,
+        include
+      })
+    })
+    const tasks = [...createTasks, principalTasks, ccTasks]
     return tasks
+  }
+
+  async taskFactory (options = {
+    name: '',
+    color: '',
+    tasks: []
+  }) {
+    const { name, color, tasks } = options
+    return {
+      id: null,
+      name,
+      color,
+      isDefault: true,
+      tasks
+    }
   }
 
   async show (params) {
@@ -63,7 +99,9 @@ class TaskService extends Service {
       }, {
         model: app.model.Tag,
         as: 'tags',
-        attributes: ['id', 'name']
+        attributes: {
+          exclude: ['creatorId', 'createdAt', 'updatedAt']
+        }
       }, {
         model: app.model.User,
         as: 'principals',
@@ -76,12 +114,38 @@ class TaskService extends Service {
         attributes: {
           exclude: ['password', 'createdAt', 'updatedAt']
         }
+      }, {
+        model: app.model.TaskRate,
+        as: 'rates',
+        attributes: {
+          exclude: ['taskId', 'createdAt', 'updatedAt']
+        },
+        include: {
+          model: app.model.User,
+          as: 'rater',
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt']
+          }
+        }
       }]
     })
     if (!task) {
       ctx.throw(404, '不存在该任务')
     }
-    if (task.creatorId !== ctx.state.currentUser.id) {
+    const isCreator = task.creatorId === ctx.state.currentUser.id
+    const isPrincipal = await app.model.TaskPrincipal.findOne({
+      where: {
+        taskId: id,
+        principalId: ctx.state.currentUser.id
+      }
+    })
+    const isCcer = await app.model.TaskCcer.findOne({
+      where: {
+        taskId: id,
+        ccerId: ctx.state.currentUser.id
+      }
+    })
+    if (!isCreator && !isPrincipal && !isCcer) {
       ctx.throw(403, '无权限查看')
     }
     return task
@@ -121,7 +185,15 @@ class TaskService extends Service {
     if (!task) {
       ctx.throw(404, '不存在该任务')
     }
-    if (task.creatorId !== ctx.state.currentUser.id) {
+    const isCreator = task.creatorId === ctx.state.currentUser.id
+    const isPrincipal = await app.model.TaskPrincipal.findOne({
+      where: {
+        taskId: id,
+        principalId: ctx.state.currentUser.id
+      }
+    })
+    // 抄送人无权限更新
+    if (!isCreator && !isPrincipal) {
       ctx.throw(403, '无权限更新')
     }
     // 更新关联表
@@ -142,6 +214,18 @@ class TaskService extends Service {
       await task.setTags(tags)
     }
     // 更新主表
+    if (params.hasOwnProperty('status')) {
+      switch (params['status']) {
+        case TASK_STATUS['unfinished'].value:
+          params['finishedTime'] = null
+          break
+        case TASK_STATUS['finished'].value:
+          params['finishedTime'] = new Date()
+          break
+        default:
+          break
+      }
+    }
     await task.update(params)
     return await this.show({ id })
   }
@@ -164,11 +248,34 @@ class TaskService extends Service {
     ctx.status = 200
   }
 
+  async taskRate (params) {
+    const { ctx, app } = this
+    const { taskId } = params
+    const task = await this.show({ id: taskId })
+    if (task.status !== TASK_STATUS['finished'].value) {
+      ctx.throw(422, '仅在完成状态下允许对该任务作出评价')
+    }
+    const taskRate = await app.model.TaskRate.findOne({
+      where: {
+        taskId,
+        raterId: ctx.state.currentUser.id
+      }
+    })
+    if (taskRate) {
+      ctx.throw(422, '已对该任务作出评价')
+    }
+    const updateDefault = {
+      raterId: ctx.state.currentUser.id
+    }
+    await app.model.TaskRate.create(Object.assign({}, params, updateDefault))
+    ctx.status = 200
+  }
+
   async getMembers (params) {
     const { ctx } = this
     const { id } = params
     const task = await this.show({ id })
-    const members = ctx.helper.uniqueArray([task.creator].concat(task.principals).concat(task.ccers), 'id')
+    const members = ctx.helper.uniqueArray([task.creator, ...task.principals, ...task.ccers], 'id')
     return members
   }
 }

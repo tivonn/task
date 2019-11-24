@@ -48,6 +48,12 @@ module.exports = app => {
       field: 'reminder_time',
       comment: '提醒时间'
     },
+    finishedTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'finished_time',
+      comment: '完成时间'
+    },
     taskTypeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -109,6 +115,11 @@ module.exports = app => {
       },
       foreignKey: 'taskId',
       constraints: false
+    })
+    sequelize.Task.hasMany(sequelize.TaskRate, {
+      as: 'rates',
+      sourceKey: 'id',
+      targetKey: 'taskId'
     })
   }
 
