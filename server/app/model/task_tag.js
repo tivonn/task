@@ -15,12 +15,16 @@ module.exports = app => {
     taskId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'taskTag'
+      unique: 'taskTag',
+      field: 'task_id',
+      comment: '任务id'
     },
     tagId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'taskTag'
+      unique: 'taskTag',
+      field: 'tag_id',
+      comment: '标签id'
     }
   })
 

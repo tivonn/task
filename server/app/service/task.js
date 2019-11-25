@@ -116,7 +116,7 @@ class TaskService extends Service {
         }
       }, {
         model: app.model.TaskRate,
-        as: 'rates',
+        as: 'taskRates',
         attributes: {
           exclude: ['taskId', 'createdAt', 'updatedAt']
         },
@@ -127,6 +127,25 @@ class TaskService extends Service {
             exclude: ['password', 'createdAt', 'updatedAt']
           }
         }
+      }, {
+        model: app.model.MemberRate,
+        as: 'memberRates',
+        attributes: {
+          exclude: ['taskId', 'createdAt', 'updatedAt']
+        },
+        include: [{
+          model: app.model.User,
+          as: 'member',
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt']
+          }
+        }, {
+          model: app.model.User,
+          as: 'rater',
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt']
+          }
+        }]
       }]
     })
     if (!task) {
@@ -268,6 +287,33 @@ class TaskService extends Service {
       raterId: ctx.state.currentUser.id
     }
     await app.model.TaskRate.create(Object.assign({}, params, updateDefault))
+    ctx.status = 200
+  }
+
+  async memberRate (params) {
+    const { ctx, app } = this
+    const { taskId, memberId } = params
+    const task = await this.show({ id: taskId })
+    if (task.status !== TASK_STATUS['finished'].value) {
+      ctx.throw(422, '仅在完成状态下允许对该任务作出评价')
+    }
+    if (params.memberId === ctx.state.currentUser.id) {
+      ctx.throw(422, '不允许评价自己')
+    }
+    const memberRate = await app.model.MemberRate.findOne({
+      where: {
+        taskId,
+        memberId,
+        raterId: ctx.state.currentUser.id
+      }
+    })
+    if (memberRate) {
+      ctx.throw(422, '已对该成员作出评价')
+    }
+    const updateDefault = {
+      raterId: ctx.state.currentUser.id
+    }
+    await app.model.MemberRate.create(Object.assign({}, params, updateDefault))
     ctx.status = 200
   }
 

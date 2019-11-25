@@ -122,6 +122,13 @@ const updateTaskRateRules = {
   },
 }
 
+const updateMemberRateRules = Object.assign({}, updateTaskRateRules, {
+  memberId: {
+    type: 'number',
+    required: true
+  }
+})
+
 const getMemberRules = getRules
 
 class TaskController extends Controller {
@@ -167,6 +174,12 @@ class TaskController extends Controller {
     const { ctx } = this
     const params = ctx.filterParams(updateTaskRateRules, Object.assign({}, ctx.params, ctx.request.body))
     await this.taskService.taskRate(params)
+  }
+
+  async memberRate () {
+    const { ctx } = this
+    const params = ctx.filterParams(updateMemberRateRules, Object.assign({}, ctx.params, ctx.request.body))
+    await this.taskService.memberRate(params)
   }
 
   async showMembers () {

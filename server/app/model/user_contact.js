@@ -15,12 +15,16 @@ module.exports = app => {
     creatorId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'userContact'
+      unique: 'userContact',
+      field: 'creator_id',
+      comment: '创建人id'
     },
     contactId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: 'userContact'
+      unique: 'userContact',
+      field: 'contact_id',
+      comment: '联系人id'
     }
   })
 

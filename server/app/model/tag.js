@@ -36,7 +36,7 @@ module.exports = app => {
       as: 'tasks',
       through: {
         model: sequelize.TaskTag,
-        unique: false,
+        unique: false
       },
       foreignKey: 'tagId',
       constraints: false

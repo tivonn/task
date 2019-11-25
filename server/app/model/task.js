@@ -97,7 +97,7 @@ module.exports = app => {
       as: 'principals',
       through: {
         model: app.model.TaskPrincipal,
-        unique: false,
+        unique: false
       },
       foreignKey: 'taskId',
       constraints: false
@@ -111,13 +111,18 @@ module.exports = app => {
       as: 'ccers',
       through: {
         model: app.model.TaskCcer,
-        unique: false,
+        unique: false
       },
       foreignKey: 'taskId',
       constraints: false
     })
     sequelize.Task.hasMany(sequelize.TaskRate, {
-      as: 'rates',
+      as: 'taskRates',
+      sourceKey: 'id',
+      targetKey: 'taskId'
+    })
+    sequelize.Task.hasMany(sequelize.MemberRate, {
+      as: 'memberRates',
       sourceKey: 'id',
       targetKey: 'taskId'
     })
