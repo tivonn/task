@@ -80,7 +80,7 @@ class TaskService extends Service {
     }
   }
 
-  async show (params) {
+  async get (params) {
     const { ctx, app } = this
     const { id } = params
     const task = await this.taskModel.findOne({
@@ -146,6 +146,19 @@ class TaskService extends Service {
             exclude: ['password', 'createdAt', 'updatedAt']
           }
         }]
+      }, {
+        model: app.model.Plan,
+        as: 'plans',
+        attributes: {
+          exclude: ['taskId', 'createdAt', 'updatedAt']
+        },
+        include: {
+          model: app.model.User,
+          as: 'principals',
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt']
+          }
+        }
       }]
     })
     if (!task) {
@@ -246,10 +259,10 @@ class TaskService extends Service {
       }
     }
     await task.update(params)
-    return await this.show({ id })
+    return await this.get({ id })
   }
 
-  async destroy (params) {
+  async delete (params) {
     const { ctx } = this
     const { id } = params
     const task = await this.taskModel.findOne({
@@ -267,10 +280,10 @@ class TaskService extends Service {
     ctx.status = 200
   }
 
-  async taskRate (params) {
+  async createTaskRate (params) {
     const { ctx, app } = this
     const { taskId } = params
-    const task = await this.show({ id: taskId })
+    const task = await this.get({ id: taskId })
     if (task.status !== TASK_STATUS['finished'].value) {
       ctx.throw(422, '仅在完成状态下允许对该任务作出评价')
     }
@@ -290,10 +303,10 @@ class TaskService extends Service {
     ctx.status = 200
   }
 
-  async memberRate (params) {
+  async createMemberRate (params) {
     const { ctx, app } = this
     const { taskId, memberId } = params
-    const task = await this.show({ id: taskId })
+    const task = await this.get({ id: taskId })
     if (task.status !== TASK_STATUS['finished'].value) {
       ctx.throw(422, '仅在完成状态下允许对该任务作出评价')
     }
@@ -320,9 +333,76 @@ class TaskService extends Service {
   async getMembers (params) {
     const { ctx } = this
     const { id } = params
-    const task = await this.show({ id })
+    const task = await this.get({ id })
     const members = ctx.helper.uniqueArray([task.creator, ...task.principals, ...task.ccers], 'id')
     return members
+  }
+
+  async createPlan (params) {
+    const { ctx, app } = this
+    const { taskId } = params
+    const task = await this.get({ id: taskId })
+    const updateDefault = {
+      isFinished: false
+    }
+    await app.model.Plan.create(Object.assign({}, params, updateDefault))
+    ctx.status = 200
+  }
+
+  async updatePlan (params) {
+    const { ctx, app } = this
+    const { id, taskId } = params
+    const task = await this.get({ id: taskId })
+    const plan = await app.model.Plan.findOne({
+      where: {
+        id,
+        taskId
+      }
+    })
+    if (!plan) {
+      ctx.throw(404, '不存在该计划')
+    }
+    // 更新关联表
+    if (params.hasOwnProperty('principalIds')) {
+      const { principalIds } = params
+      const members = await this.getMembers({ id: taskId })
+      let planPrincipalIds = principalIds.filter(id => members.some(member => member.id === id))
+      await plan.setPrincipals(planPrincipalIds)
+    }
+    // 更新主表
+    if (params.hasOwnProperty('startTime') && !params.hasOwnProperty('finishedTime')
+    || !params.hasOwnProperty('startTime') && params.hasOwnProperty('finishedTime')) {
+      ctx.throw(422, '起止时间需同时更新')
+    }
+    await plan.update(params)
+    ctx.status = 200
+  }
+
+  async deletePlan (params) {
+    const { ctx, app } = this
+    const { id, taskId } = params
+    const task = await this.taskModel.findOne({
+      where: {
+        id: taskId
+      }
+    })
+    if (!task) {
+      ctx.throw(404, '不存在该任务')
+    }
+    if (task.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(403, '无权限删除')
+    }
+    const plan = await app.model.Plan.findOne({
+      where: {
+        id,
+        taskId
+      }
+    })
+    if (!plan) {
+      ctx.throw(404, '不存在该计划')
+    }
+    await plan.destroy()
+    ctx.status = 200
   }
 }
 

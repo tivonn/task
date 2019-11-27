@@ -60,10 +60,10 @@ class TagController extends Controller {
     ctx.body = tag
   }
 
-  async destroy () {
+  async delete () {
     const { ctx } = this
     const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
-    await this.tagService.destroy(params)
+    await this.tagService.delete(params)
   }
 }
 

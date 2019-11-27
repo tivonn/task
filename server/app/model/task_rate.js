@@ -45,11 +45,6 @@ module.exports = app => {
   })
 
   TaskRate.associate = () => {
-    sequelize.TaskRate.belongsTo(sequelize.Task, {
-      as: 'task',
-      foreignKey: 'taskId',
-      targetKey: 'id'
-    })
     sequelize.TaskRate.belongsTo(sequelize.User, {
       as: 'rater',
       foreignKey: 'raterId',

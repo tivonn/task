@@ -32,10 +32,10 @@ class UserController extends Controller {
     ctx.body = users
   }
 
-  async show () {
+  async get () {
     const { ctx } = this
     const params = ctx.filterParams(getRules, Object.assign({}, ctx.params))
-    const user = await this.userService.show(params)
+    const user = await this.userService.get(params)
     ctx.body = user
   }
 }

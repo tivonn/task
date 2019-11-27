@@ -55,7 +55,7 @@ class TagService extends Service {
     return tag
   }
 
-  async destroy (params) {
+  async delete (params) {
     const { ctx } = this
     const { id } = params
     const tag = await this.tagModel.findOne({

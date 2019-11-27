@@ -60,10 +60,10 @@ class TaskTypeController extends Controller {
     ctx.body = taskType
   }
 
-  async destroy () {
+  async delete () {
     const { ctx } = this
     const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
-    await this.taskTypeService.destroy(params)
+    await this.taskTypeService.delete(params)
   }
 }
 

@@ -6,5 +6,5 @@ module.exports = app => {
   taskTypeRouter.get('/', controller.taskType.index)
   taskTypeRouter.post('/', controller.taskType.create)
   taskTypeRouter.put('/:id', controller.taskType.update)
-  taskTypeRouter.delete('/:id', controller.taskType.destroy)
+  taskTypeRouter.delete('/:id', controller.taskType.delete)
 }

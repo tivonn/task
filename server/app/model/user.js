@@ -59,6 +59,15 @@ module.exports = app => {
       foreignKey: 'ccerId',
       constraints: false
     })
+    sequelize.User.belongsToMany(sequelize.Plan, {
+      as: 'principalPlan',
+      through: {
+        model: app.model.PlanPrincipal,
+        unique: false,
+      },
+      foreignKey: 'principalId',
+      constraints: false
+    })
   }
 
   ;(async () => {

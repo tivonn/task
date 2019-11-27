@@ -34,10 +34,10 @@ class ContactController extends Controller {
     await this.contactService.create(params)
   }
 
-  async destroy () {
+  async delete () {
     const { ctx } = this
     const params = ctx.filterParams(deleteRules, Object.assign({}, ctx.params))
-    await this.contactService.destroy(params)
+    await this.contactService.delete(params)
   }
 }
 

@@ -51,7 +51,7 @@ class TaskTypeService extends Service {
     return taskType
   }
 
-  async destroy (params) {
+  async delete (params) {
     const { ctx, app } = this
     const { id } = params
     const taskType = await this.taskTypeModel.findOne({

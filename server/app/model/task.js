@@ -16,7 +16,7 @@ module.exports = app => {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'name',
-      comment: '姓名'
+      comment: '任务名'
     },
     description: {
       type: DataTypes.TEXT,
@@ -123,6 +123,11 @@ module.exports = app => {
     })
     sequelize.Task.hasMany(sequelize.MemberRate, {
       as: 'memberRates',
+      sourceKey: 'id',
+      targetKey: 'taskId'
+    })
+    sequelize.Task.hasMany(sequelize.Plan, {
+      as: 'plans',
       sourceKey: 'id',
       targetKey: 'taskId'
     })

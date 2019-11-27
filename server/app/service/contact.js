@@ -46,7 +46,7 @@ class ContactService extends Service {
     ctx.status = 200
   }
 
-  async destroy (params) {
+  async delete (params) {
     const { ctx } = this
     const { id } = params
     const userContact = await this.userContactModel.findOne({

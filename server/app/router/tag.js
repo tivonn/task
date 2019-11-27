@@ -6,5 +6,5 @@ module.exports = app => {
   tagRouter.get('/', controller.tag.index)
   tagRouter.post('/', controller.tag.create)
   tagRouter.put('/:id', controller.tag.update)
-  tagRouter.delete('/:id', controller.tag.destroy)
+  tagRouter.delete('/:id', controller.tag.delete)
 }

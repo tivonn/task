@@ -30,7 +30,7 @@ class UserService extends Service {
     return users
   }
 
-  async show (params) {
+  async get (params) {
     const { id } = params
     const user = await this.userModel.findOne({
       where: {
