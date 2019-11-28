@@ -12,7 +12,7 @@ class TaskService extends Service {
   async index (params) {
     const { ctx, app } = this
     const { Op } = app.Sequelize
-    const { status } = params
+    const { status, isCreate, isPrincipal, isCC } = params
     let taskWhere = {
       creatorId: ctx.state.currentUser.id
     }
@@ -47,7 +47,12 @@ class TaskService extends Service {
       name: '我负责的',
       color: '#55c580',
       tasks: await this.taskModel.findAll({
-        where: app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+        where: {
+          [Op.and]: [
+            taskWhere,
+            app.Sequelize.literal(`exists(select 1 from task_principal where principal_id = ${ctx.state.currentUser.id} and task_id = task.id)`)
+          ]
+        },
         attributes,
         include
       })
@@ -56,12 +61,37 @@ class TaskService extends Service {
       name: '抄送我的',
       color: '#409eff',
       tasks:  await this.taskModel.findAll({
-        where: app.Sequelize.literal(`exists(select 1 from task_ccer where ccer_id = ${ctx.state.currentUser.id} and task_id = task.id)`),
+        where: {
+          [Op.and]: [
+            taskWhere,
+            app.Sequelize.literal(`exists(select 1 from task_ccer where ccer_id = ${ctx.state.currentUser.id} and task_id = task.id)`)
+            ]
+        },
         attributes,
         include
       })
     })
-    const tasks = [...createTasks, principalTasks, ccTasks]
+    const isAll = !!isCreate && !!isPrincipal && !!isCC || !isCreate && !isPrincipal && !isCC
+    const typeMap = {
+      'create': isCreate,
+      'principal': isPrincipal,
+      'cc': isCC
+    }
+    const types = ['create', 'principal', 'cc'].filter(type => isAll || typeMap[type])
+    const tasks = types.reduce((p, v) => {
+      switch (v) {
+        case 'create':
+          p.push(...createTasks)
+          break
+        case 'principal':
+          p.push(principalTasks)
+          break
+        case 'cc':
+          p.push(ccTasks)
+          break
+      }
+      return p
+    }, [])
     return tasks
   }
 

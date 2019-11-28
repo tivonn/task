@@ -12,7 +12,19 @@ const getAllRules = {
   status: {
     type: 'number',
     required: false
-  }
+  },
+  isCreate: {
+    type: 'boolean',
+    required: false
+  },
+  isPrincipal: {
+    type: 'boolean',
+    required: false
+  },
+  isCC: {
+    type: 'boolean',
+    required: false
+  },
 }
 
 const getRules = {
