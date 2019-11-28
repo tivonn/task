@@ -189,6 +189,27 @@ const deletePlanRules = {
   }
 }
 
+const createBranchRules = Object.assign({}, createPlanRules, {
+  planId: {
+    type: 'number',
+    required: true
+  }
+})
+
+const updateBranchRules = Object.assign({}, updatePlanRules, {
+  planId: {
+    type: 'number',
+    required: true
+  }
+})
+
+const deleteBranchRules = Object.assign({}, deletePlanRules, {
+  planId: {
+    type: 'number',
+    required: true
+  }
+})
+
 class TaskController extends Controller {
   get taskService () {
     return this.ctx.service.task
@@ -263,6 +284,24 @@ class TaskController extends Controller {
     const { ctx } = this
     const params = ctx.filterParams(deletePlanRules, Object.assign({}, ctx.params))
     await this.taskService.deletePlan(params)
+  }
+
+  async createBranch () {
+    const { ctx } = this
+    const params = ctx.filterParams(createBranchRules, Object.assign({}, ctx.params, ctx.request.body))
+    await this.taskService.createBranch(params)
+  }
+
+  async updateBranch () {
+    const { ctx } = this
+    const params = ctx.filterParams(updateBranchRules, Object.assign({}, ctx.params, ctx.request.body))
+    await this.taskService.updateBranch(params)
+  }
+
+  async deleteBranch () {
+    const { ctx } = this
+    const params = ctx.filterParams(deleteBranchRules, Object.assign({}, ctx.params, ctx.request.body))
+    await this.taskService.deleteBranch(params)
   }
 }
 

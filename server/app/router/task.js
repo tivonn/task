@@ -14,4 +14,7 @@ module.exports = app => {
   taskRouter.post('/:taskId/plan', controller.task.createPlan)
   taskRouter.put('/:taskId/plan/:id', controller.task.updatePlan)
   taskRouter.delete('/:taskId/plan/:id', controller.task.deletePlan)
+  taskRouter.post('/:taskId/branch', controller.task.createBranch)
+  taskRouter.put('/:taskId/branch/:id', controller.task.updateBranch)
+  taskRouter.delete('/:taskId/branch/:id', controller.task.deleteBranch)
 }

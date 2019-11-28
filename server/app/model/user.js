@@ -68,6 +68,15 @@ module.exports = app => {
       foreignKey: 'principalId',
       constraints: false
     })
+    sequelize.User.belongsToMany(sequelize.Branch, {
+      as: 'principalBranch',
+      through: {
+        model: app.model.BranchPrincipal,
+        unique: false,
+      },
+      foreignKey: 'principalId',
+      constraints: false
+    })
   }
 
   ;(async () => {

@@ -4,7 +4,7 @@ module.exports = app => {
   const DataTypes = app.Sequelize
   const sequelize = app.model
 
-  const Plan = sequelize.define('plan', {
+  const Branch = sequelize.define('branch', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -23,6 +23,12 @@ module.exports = app => {
       allowNull: false,
       field: 'task_id',
       comment: '任务id'
+    },
+    planId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'plan_id',
+      comment: '计划id'
     },
     isFinished: {
       type: DataTypes.BOOLEAN,
@@ -50,27 +56,22 @@ module.exports = app => {
     }
   })
 
-  Plan.associate = () => {
-    sequelize.Plan.hasMany(sequelize.PlanPrincipal, {
+  Branch.associate = () => {
+    sequelize.Branch.hasMany(sequelize.BranchPrincipal, {
       as: 'principal',
       sourceKey: 'id',
-      targetKey: 'planId'
+      targetKey: 'branchId'
     })
-    sequelize.Plan.belongsToMany(sequelize.User, {
+    sequelize.Branch.belongsToMany(sequelize.User, {
       as: 'principals',
       through: {
-        model: app.model.PlanPrincipal,
+        model: app.model.BranchPrincipal,
         unique: false
       },
-      foreignKey: 'planId',
+      foreignKey: 'branchId',
       constraints: false
-    })
-    sequelize.Plan.hasMany(sequelize.Branch, {
-      as: 'branchs',
-      sourceKey: 'id',
-      targetKey: 'planId'
     })
   }
 
-  return Plan
+  return Branch
 }

@@ -152,13 +152,26 @@ class TaskService extends Service {
         attributes: {
           exclude: ['taskId', 'createdAt', 'updatedAt']
         },
-        include: {
+        include: [{
           model: app.model.User,
           as: 'principals',
           attributes: {
             exclude: ['password', 'createdAt', 'updatedAt']
           }
-        }
+        }, {
+          model: app.model.Branch,
+          as: 'branchs',
+          attributes: {
+            exclude: ['taskId', 'planId', 'createdAt', 'updatedAt']
+          },
+          include: {
+            model: app.model.User,
+            as: 'principals',
+            attributes: {
+              exclude: ['password', 'createdAt', 'updatedAt']
+            }
+          }
+        }]
       }]
     })
     if (!task) {
@@ -402,6 +415,75 @@ class TaskService extends Service {
       ctx.throw(404, '不存在该计划')
     }
     await plan.destroy()
+    ctx.status = 200
+  }
+
+  async createBranch (params) {
+    const { ctx, app } = this
+    const { taskId } = params
+    const task = await this.get({ id: taskId })
+    const updateDefault = {
+      isFinished: false
+    }
+    await app.model.Branch.create(Object.assign({}, params, updateDefault))
+    ctx.status = 200
+  }
+
+  async updateBranch (params) {
+    const { ctx, app } = this
+    const { id, taskId, planId } = params
+    const task = await this.get({ id: taskId })
+    const branch = await app.model.Branch.findOne({
+      where: {
+        id,
+        taskId,
+        planId
+      }
+    })
+    if (!branch) {
+      ctx.throw(404, '不存在该分支')
+    }
+    // 更新关联表
+    if (params.hasOwnProperty('principalIds')) {
+      const { principalIds } = params
+      const members = await this.getMembers({ id: taskId })
+      let branchPrincipalIds = principalIds.filter(id => members.some(member => member.id === id))
+      await branch.setPrincipals(branchPrincipalIds)
+    }
+    // 更新主表
+    if (params.hasOwnProperty('startTime') && !params.hasOwnProperty('finishedTime')
+      || !params.hasOwnProperty('startTime') && params.hasOwnProperty('finishedTime')) {
+      ctx.throw(422, '起止时间需同时更新')
+    }
+    await branch.update(params)
+    ctx.status = 200
+  }
+
+  async deleteBranch (params) {
+    const { ctx, app } = this
+    const { id, taskId, planId } = params
+    const task = await this.taskModel.findOne({
+      where: {
+        id: taskId
+      }
+    })
+    if (!task) {
+      ctx.throw(404, '不存在该任务')
+    }
+    if (task.creatorId !== ctx.state.currentUser.id) {
+      ctx.throw(403, '无权限删除')
+    }
+    const branch = await app.model.Branch.findOne({
+      where: {
+        id,
+        taskId,
+        planId
+      }
+    })
+    if (!branch) {
+      ctx.throw(404, '不存在该分支')
+    }
+    await branch.destroy()
     ctx.status = 200
   }
 }
