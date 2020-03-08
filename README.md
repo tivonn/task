@@ -1,33 +1,17 @@
 # task
 
+## 项目介绍
+
 server of the task management application
 
-## QuickStart
+## 技术栈
 
-<!-- add docs here for user -->
+Egg.js
 
-see [egg docs][egg] for more detail.
-
-### Development
+## 启动项目
 
 ```bash
 $ npm i
 $ npm run dev
 $ open http://localhost:7001/
 ```
-
-### Deploy
-
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
