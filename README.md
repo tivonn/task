@@ -2,7 +2,9 @@
 
 ## 项目介绍
 
-server of the task management application
+> server of the task management application
+
+> 任务管理工具
 
 ## 技术栈
 
